@@ -2,35 +2,38 @@ version: '3.6'
 
 services:
 
-  oms-master:
+  db-master:
     image: "postgres:9.6"
     restart: always
+    container_name: "db-master"
     environment:
       POSTGRES_PASSWORD: admin@@090
-      OMS_ENV: dev
+      db_ENV: dev
     ports:
       - "5433:5432"
 
-  oms-slave:
+  db-slave:
     image: "postgres:9.6"
     restart: always
+    container_name: "db-slave"
     environment:
       POSTGRES_PASSWORD: admin@@090
-      OMS_ENV: dev
+      db_ENV: dev
     ports:
       - "5434:5432"
 
-  oms-pgpool:
+  db-pgpool:
     build: ./pgpoolv2
     image: "pgpool:v2"
+    container_name: "db-pgpool"
     environment:
-      OMS_ENV: dev   
+      db_ENV: dev   
     ports:
       - "5432:9999"
       - "9898:9898"
     depends_on:
-        - oms-master
-        - oms-slave
+        - db-master
+        - db-slave
     links:
-      - oms-master
-      - oms-slave
+      - db-master
+      - db-slave
