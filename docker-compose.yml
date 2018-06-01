@@ -1,0 +1,36 @@
+version: '3.6'
+
+services:
+
+  oms-master:
+    image: "postgres:9.6"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin@@090
+      OMS_ENV: dev
+    ports:
+      - "5433:5432"
+
+  oms-slave:
+    image: "postgres:9.6"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin@@090
+      OMS_ENV: dev
+    ports:
+      - "5434:5432"
+
+  oms-pgpool:
+    build: ./pgpoolv2
+    image: "pgpool:v2"
+    environment:
+      OMS_ENV: dev   
+    ports:
+      - "5432:9999"
+      - "9898:9898"
+    depends_on:
+        - oms-master
+        - oms-slave
+    links:
+      - oms-master
+      - oms-slave
