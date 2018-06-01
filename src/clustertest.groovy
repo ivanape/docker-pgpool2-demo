@@ -22,12 +22,21 @@ def createTableScript = """
 sql.execute(dropTableIfExists)
 sql.execute(createTableScript)
 
+def nTrans = 10000
+
+def start = new Date()
+println start.format("YYYYMMdd-HH:mm:ss") 
+
 def qry = 'INSERT INTO article (article_name, article_desc) VALUES (?,?)'
 
-for(int i in 1..10000) {
-    sql.withBatch(1000, qry) { ps ->
+sql.withBatch(1000, qry) { ps ->
+    nTrans.times {
         ps.addBatch('article_name', 'article_description')
-    }
+    }      
 }
 
+
 sql.close()
+
+def end = new Date()
+println end.format("YYYYMMdd-HH:mm:ss") 
